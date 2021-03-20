@@ -1,3 +1,69 @@
-#root {
-  color: red;
+html {
+  font-size: 16px;
+}
+
+.allEpisodes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.episodeWrapper {
+  width: 400px;
+  margin-bottom: 15px;
+
+  background-color: whitesmoke;
+
+  font-family: "Poppins";
+
+  border-radius: 10px;
+}
+.episodeName {
+  height: 60px;
+  padding: 10px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+
+  border: 2px solid black;
+  border-radius: 5px;
+
+  font-size: 1.3rem;
+  color: black;
+  text-align: center;
+}
+
+.episodePicture {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.episodeDescription {
+  padding: 10px;
+
+  font-size: 1.1rem;
+  color: #5c5c5c;
+}
+
+nav {
+  margin-bottom: 50px;
+  padding: 20px 10px;
+
+  background-color: whitesmoke;
+}
+
+#mySearchBar {
+  width: 20%;
+  height: 30px;
+}
+
+.mySearchResult {
+  margin-left: 20px;
+  color: #5c5c5c;
+}
+
+footer {
+  background-color: #efe5dc;
+  padding: 1%;
+  margin-bottom: 0px;
 }
