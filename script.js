@@ -3,6 +3,7 @@ function setup() {
   const allEpisodes = getAllEpisodes();
   makePageForEpisodes(allEpisodes);
   displayResults();
+  selectEpisode();
 }
 
 function makePageForEpisodes(episodesList) {
@@ -95,4 +96,70 @@ function displayResults() {
   }
 }
 
+//level 300
+function selectEpisode() {
+  let chooseEpisode = document.createElement("label");
+  chooseEpisode.innerText = "Choose an episode";
+  chooseEpisode.classList.add("myChooseEpisode")                                                           //setAttribute can also be used to add class.
+
+  let selectAnEpisode = document.createElement("select");
+  selectAnEpisode.setAttribute("id", "episodes")
+
+  let pageNavigation = document.querySelector("nav")                                                      //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
+  pageNavigation.prepend(chooseEpisode, selectAnEpisode);
+
+  let getEpisodesTitles = document.getElementsByClassName("episodeName")
+
+  for (let titleIndex = 0; titleIndex < getEpisodesTitles.length; titleIndex++) {
+    let episodeOption = document.createElement("option");
+    selectAnEpisode.appendChild(episodeOption);
+
+    episodeOption.innerText = getEpisodesTitles[titleIndex].innerText;
+  
+  }
+
+  selectAnEpisode.addEventListener("change", selected)
+  function selected(e) {
+    let selectedOption = e.target.value;
+    console.log(e)
+    let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
+    let allEpisodesOnPage = Array.from(getEpisodesOnPage);
+
+    allEpisodesOnPage.forEach( episode => {
+      if (episode.innerText.includes(selectedOption) ) {
+        episode.style.display = "";         
+      } else  {
+        episode.style.display = "none";
+      }
+    })
+
+  }
+   
+}
 window.onload = setup;
+
+
+
+
+
+
+
+
+
+
+
+// for (let episodeIndex = 0; episodeIndex < getEpisodesOnPage.length; episodeIndex++) {
+//   if (getEpisodesOnPage[episodeIndex].innerText.includes(selectedOption)) {
+//     // console.log(getEpisodesOnPage[episodeIndex].innerText.includes(selectedOption))
+//     getEpisodesOnPage[episodeIndex].style.display = "";
+//   } else {
+//     getEpisodesOnPage[episodeIndex].style.display = "none";
+
+//   }
+//   if (getEpisodesOnPage[episodeIndex].innerText.includes(selectedOption) !== selectedOption) {
+//     getEpisodesOnPage[episodeIndex].style.display = "";
+
+//     console.log(getEpisodesOnPage[episodeIndex].innerText)
+//   }
+
+// }
