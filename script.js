@@ -1,10 +1,40 @@
 //You can edit ALL of the code here
+
+// Level 350
+
+let allEpisodes;
+let showID = 82;
+
+function getAllEpisodes(showID) {
+  fetch(`https://api.tvmaze.com/shows/${showID}/episodes`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw `${response.status} ${response.statusText}`
+    })
+    .then(data => {
+      allEpisodes = data;
+      setup()
+      console.log(data)
+    })
+    .catch(error => {
+      let errorMessage = document.createElement("p");
+      errorMessage.innerText = error;
+
+      let rootElem = document.getElementById("root");
+      rootElem.appendChild(errorMessage)
+    })
+}
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
   makePageForEpisodes(allEpisodes);
   displayResults();
   selectEpisode();
+  addAllShows()
 }
+
+// Level 100
 
 function makePageForEpisodes(episodesList) {
   const rootElem = document.getElementById("root");
@@ -35,7 +65,7 @@ function makePageForEpisodes(episodesList) {
 
 function addContentToEachEpisode(list, index) {
   let title = document.getElementsByClassName("episodeName")[index];
-  title.innerHTML = `${list[index].name} - <span> ${getSeasonAndEpisodeNumber(list, index)} </span>`;
+  title.innerHTML = `${list[index].name} - ${getSeasonAndEpisodeNumber(list, index)}`;
 
   let picture = document.getElementsByClassName("episodePicture")[index];
   picture.setAttribute("src", `${list[index].image.original}`)
@@ -45,18 +75,23 @@ function addContentToEachEpisode(list, index) {
 }
 
 function getSeasonAndEpisodeNumber(list, index) {
-  let seasonNumber = `S${(list[index].season < 10 ? "0" : "") + list[index].season}`
-  let episodeNumber = `E${(list[index].number < 10 ? "0" : "") + list[index].number}`
+  const pattern = 10;
+
+  let seasonNumber = `S${(list[index].season < pattern ? "0" : "") + list[index].season}`
+  let episodeNumber = `E${(list[index].number < pattern ? "0" : "") + list[index].number}`
 
   return `${seasonNumber + episodeNumber}`
 }
 
 //level 200
+
 function displayResults() {
-  let pageHeader = document.querySelector("header")
+  let navigationWrapper = document.querySelector(".navigationWrapper")
 
   let pageNavigation = document.createElement("nav");
-  pageHeader.appendChild(pageNavigation);
+  navigationWrapper.appendChild(pageNavigation);
+
+  console.log(pageNavigation)
 
   let searchBar = document.createElement("input");
   searchBar.setAttribute("type", "text");
@@ -72,94 +107,130 @@ function displayResults() {
   pageNavigation.appendChild(searchResult)
 
   searchBar.addEventListener("keyup", searchThroughEpisodes)
+}
 
-  function searchThroughEpisodes(e) {
-    let searchString = e.target.value.toUpperCase();
-    let allEpisodesOnPage = Array.from(getEpisodesOnPage);
-    let newEpisodes = [];
+function searchThroughEpisodes(e) {
+  let searchString = e.target.value.toUpperCase();
 
-    allEpisodesOnPage.forEach(episode => {
+  let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper")
+  let searchResult = document.getElementsByClassName("mySearchResult")
 
-      if (episode.innerText.toUpperCase().includes(searchString)) {
-        episode.style.display = "";
-        newEpisodes.push(episode);
-        searchResult.innerText = `Displaying ${newEpisodes.length}/${getEpisodesOnPage.length} episodes `;
-      } else {
-        episode.style.display = "none";
-        searchResult.innerText = `Displaying ${newEpisodes.length}/${getEpisodesOnPage.length} episodes `;
-      }
-      if (searchString.length === 0) {                                                                      //I have this condition, so when you type "winter" for example and get a result of 10/73, then when you delete it all you want the result to be 73 and not 73/73
-        searchResult.innerText = `Displaying ${getEpisodesOnPage.length} episodes `;
-      }
-    });
+  let allEpisodesOnPage = Array.from(getEpisodesOnPage);
+  let newEpisodes = [];
 
-  }
+  allEpisodesOnPage.forEach(episode => {
+    if (episode.innerText.toUpperCase().includes(searchString)) {
+      episode.style.display = "";
+      newEpisodes.push(episode);
+    } else {
+      episode.style.display = "none";
+    }
+
+    searchResult.innerText = `Displaying ${newEpisodes.length}/${getEpisodesOnPage.length} episodes`;
+
+    if (searchString.length === 0) {                                                                      //I have this condition, so when you type "winter" for example and get a result of 10/73, then when you delete it all you want the result to be 73 and not 73/73
+      searchResult.innerText = `Displaying ${getEpisodesOnPage.length} episodes`;
+    }
+  });
 }
 
 //level 300
-function selectEpisode() {
-  let chooseEpisode = document.createElement("label");
-  chooseEpisode.innerText = "Choose an episode";
-  chooseEpisode.classList.add("myChooseEpisode")                                                           //setAttribute can also be used to add class.
 
+function selectEpisode() {
   let selectAnEpisode = document.createElement("select");
   selectAnEpisode.setAttribute("id", "episodes")
 
   let pageNavigation = document.querySelector("nav")                                                      //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
-  pageNavigation.prepend(chooseEpisode, selectAnEpisode);
+  pageNavigation.appendChild(selectAnEpisode);
 
   let getEpisodesTitles = document.getElementsByClassName("episodeName")
 
+  let episodeOption = document.createElement("option");
+  episodeOption.innerText = "Main Page";
+  selectAnEpisode.appendChild(episodeOption);
+
   for (let titleIndex = 0; titleIndex < getEpisodesTitles.length; titleIndex++) {
-    let episodeOption = document.createElement("option");
+    episodeOption = document.createElement("option");
     selectAnEpisode.appendChild(episodeOption);
 
     episodeOption.innerText = getEpisodesTitles[titleIndex].innerText;
-  
   }
 
-  selectAnEpisode.addEventListener("change", selected)
-  function selected(e) {
-    let selectedOption = e.target.value;
-    console.log(e)
-    let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
-    let allEpisodesOnPage = Array.from(getEpisodesOnPage);
-
-    allEpisodesOnPage.forEach( episode => {
-      if (episode.innerText.includes(selectedOption) ) {
-        episode.style.display = "";         
-      } else  {
-        episode.style.display = "none";
-      }
-    })
-
-  }
-   
+  selectAnEpisode.addEventListener("change", selectedEpisode)
 }
-window.onload = setup;
+
+function selectedEpisode(e) {
+  let selectedOption = e.target.value;
+  let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
+  let allEpisodesOnPage = Array.from(getEpisodesOnPage);
+
+  allEpisodesOnPage.forEach(episode => {
+    if (episode.innerText.includes(selectedOption)) {
+      episode.style.display = "";
+    } else {
+      episode.style.display = "none";
+    }
+
+    if (selectedOption === "Main Page") {
+      episode.style.display = "";
+    }
+
+  })
+}
+
+//Level 400
+
+function addAllShows() {
+  let selectAShow = document.createElement("select");
+  selectAShow.setAttribute("id", "shows");
+
+  let chooseEpisodeAndShow = document.createElement("label");
+  chooseEpisodeAndShow.innerText = "Choose a show & episode:";
+  chooseEpisodeAndShow.classList.add("myChooseEpisodeAndShow")
+
+  let pageNavigation = document.querySelector("nav")
+  pageNavigation.prepend(chooseEpisodeAndShow, selectAShow);
+
+  let showsList = getAllShows();
+
+  let sortedShowsList = showsList.sort(function compare(showA, showB) {
+    if (showA.name.toUpperCase() < showB.name.toLocaleUpperCase()) { return -1 }
+    if (showA.name.toUpperCase() > showB.name.toUpperCase()) { return 1 }
+    return 0;
+  })
+
+  for (let showIndex = 0; showIndex < sortedShowsList.length; showIndex++) {
+    let showOption = document.createElement("option");
+    selectAShow.appendChild(showOption);
+
+    showOption.innerText = showsList[showIndex].name
+    showOption.setAttribute("value", `${showsList[showIndex].id}`)
+  }
+
+  selectAShow.addEventListener("change", selectedShow)
+}
+
+function selectedShow(e) {
+  showID = +e.target.value
+
+  remove()
+
+  getAllEpisodes(showID)
+
+}
+
+function remove() {
+  let navigationWrapper = document.querySelector(".navigationWrapper")
+  let pageNavigation = document.querySelector("nav");
+  navigationWrapper.removeChild(pageNavigation)
+
+  let rootElem = document.querySelector("#root");
+  let sectionElem = document.querySelector(".allEpisodes")
+  rootElem.removeChild(sectionElem)
+}
+
+window.onload = getAllEpisodes(showID);
 
 
 
 
-
-
-
-
-
-
-
-// for (let episodeIndex = 0; episodeIndex < getEpisodesOnPage.length; episodeIndex++) {
-//   if (getEpisodesOnPage[episodeIndex].innerText.includes(selectedOption)) {
-//     // console.log(getEpisodesOnPage[episodeIndex].innerText.includes(selectedOption))
-//     getEpisodesOnPage[episodeIndex].style.display = "";
-//   } else {
-//     getEpisodesOnPage[episodeIndex].style.display = "none";
-
-//   }
-//   if (getEpisodesOnPage[episodeIndex].innerText.includes(selectedOption) !== selectedOption) {
-//     getEpisodesOnPage[episodeIndex].style.display = "";
-
-//     console.log(getEpisodesOnPage[episodeIndex].innerText)
-//   }
-
-// }
