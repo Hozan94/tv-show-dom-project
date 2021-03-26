@@ -16,7 +16,6 @@ function getAllEpisodes(showID) {
     .then(data => {
       allEpisodes = data;
       setup()
-      console.log(data)
     })
     .catch(error => {
       let errorMessage = document.createElement("p");
@@ -90,8 +89,6 @@ function displayResults() {
 
   let pageNavigation = document.createElement("nav");
   navigationWrapper.appendChild(pageNavigation);
-
-  console.log(pageNavigation)
 
   let searchBar = document.createElement("input");
   searchBar.setAttribute("type", "text");
