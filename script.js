@@ -3,7 +3,7 @@
 // Level 350
 
 let allEpisodes;
-let showID = 82;
+let showID = 167;
 
 function getAllEpisodes(showID) {
   fetch(`https://api.tvmaze.com/shows/${showID}/episodes`)
@@ -49,13 +49,17 @@ function makePageForEpisodes(episodesList) {
     let episodeTitle = document.createElement("h3");
     episodeTitle.classList.add("episodeName");
 
+    let imageContainer = document.createElement("div");
+    imageContainer.classList.add("pictureContainer")
+
     let episodeImage = document.createElement("img");
     episodeImage.classList.add("episodePicture")
+    imageContainer.appendChild(episodeImage)
 
     let episodeSummary = document.createElement("div");
     episodeSummary.classList.add("episodeDescription")
 
-    episodeContent.append(episodeTitle, episodeImage, episodeSummary);
+    episodeContent.append(episodeTitle, imageContainer, episodeSummary);
     ourSection.append(episodeContent);
 
     addContentToEachEpisode(episodesList, episodeIndex);
@@ -67,10 +71,18 @@ function addContentToEachEpisode(list, index) {
   title.innerHTML = `${list[index].name} - ${getSeasonAndEpisodeNumber(list, index)}`;
 
   let picture = document.getElementsByClassName("episodePicture")[index];
-  picture.setAttribute("src", `${list[index].image.original}`)
+  picture.setAttribute("src", `${getEpisodeImage(list, index)}`)
 
   let description = document.getElementsByClassName("episodeDescription")[index];
   description.innerHTML = `${list[index].summary}`;
+}
+
+function getEpisodeImage(list, index) {
+  if (list[index].image === null) {
+    return ""
+  } else {
+    return list[index].image.original;
+  }
 }
 
 function getSeasonAndEpisodeNumber(list, index) {
@@ -138,7 +150,7 @@ function selectEpisode() {
   selectAnEpisode.setAttribute("id", "episodes")
 
   let pageNavigation = document.querySelector("nav")                                                      //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
-  pageNavigation.appendChild(selectAnEpisode);
+  pageNavigation.prepend(selectAnEpisode);
 
   let getEpisodesTitles = document.getElementsByClassName("episodeName")
 
@@ -213,7 +225,6 @@ function selectedShow(e) {
   remove()
 
   getAllEpisodes(showID)
-
 }
 
 function remove() {
