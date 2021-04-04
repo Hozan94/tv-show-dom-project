@@ -3,7 +3,7 @@
 // Level 350
 
 let allEpisodes;
-let showID = 167;
+let showID;
 
 function getAllEpisodes(showID) {
   fetch(`https://api.tvmaze.com/shows/${showID}/episodes`)
@@ -11,11 +11,13 @@ function getAllEpisodes(showID) {
       if (response.ok) {
         return response.json();
       }
-      throw `${response.status} ${response.statusText}`
+      throw new Error(
+        `Encountered something unexpected: ${response.status} ${response.statusText}`
+      );
     })
     .then(data => {
       allEpisodes = data;
-      setup()
+      setUpEpisodesList()
     })
     .catch(error => {
       let errorMessage = document.createElement("p");
@@ -26,11 +28,12 @@ function getAllEpisodes(showID) {
     })
 }
 
-function setup() {
+function setUpEpisodesList() {
   makePageForEpisodes(allEpisodes);
-  displayResults();
-  selectEpisode();
-  addAllShows()
+  addSearchBar();
+  addEpisodesSelector();
+  addShowsSelector();
+  goBackToShowsListPage();
 }
 
 // Level 100
@@ -44,13 +47,13 @@ function makePageForEpisodes(episodesList) {
 
   for (let episodeIndex = 0; episodeIndex < episodesList.length; episodeIndex++) {
     let episodeContent = document.createElement("article");
-    episodeContent.classList.add("episodeWrapper");                                               //Can I make the 'class' name same as the variable name since we can not use the variable name in CSS
+    episodeContent.classList.add("wrapper");
 
     let episodeTitle = document.createElement("h3");
     episodeTitle.classList.add("episodeName");
 
     let imageContainer = document.createElement("div");
-    imageContainer.classList.add("pictureContainer")
+    imageContainer.classList.add("EpisodePictureContainer")
 
     let episodeImage = document.createElement("img");
     episodeImage.classList.add("episodePicture")
@@ -71,18 +74,19 @@ function addContentToEachEpisode(list, index) {
   title.innerHTML = `${list[index].name} - ${getSeasonAndEpisodeNumber(list, index)}`;
 
   let picture = document.getElementsByClassName("episodePicture")[index];
-  picture.setAttribute("src", `${getEpisodeImage(list, index)}`)
+  picture.setAttribute("src", `${getImage(list, index)}`)
 
   let description = document.getElementsByClassName("episodeDescription")[index];
   description.innerHTML = `${list[index].summary}`;
 }
 
-function getEpisodeImage(list, index) {
+function getImage(list, index) {
   if (list[index].image === null) {
-    return ""
+    return "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
   } else {
-    return list[index].image.original;
+    return list[index].image.medium;
   }
+
 }
 
 function getSeasonAndEpisodeNumber(list, index) {
@@ -96,7 +100,7 @@ function getSeasonAndEpisodeNumber(list, index) {
 
 //level 200
 
-function displayResults() {
+function addSearchBar() {
   let navigationWrapper = document.querySelector(".navigationWrapper")
 
   let pageNavigation = document.createElement("nav");
@@ -104,48 +108,48 @@ function displayResults() {
 
   let searchBar = document.createElement("input");
   searchBar.setAttribute("type", "text");
-  searchBar.setAttribute("placeholder", "Search through the episodes");
+  searchBar.setAttribute("placeholder", "Search through the page");
   searchBar.setAttribute("id", "mySearchBar");
   pageNavigation.appendChild(searchBar)
 
   let searchResult = document.createElement("label")
   searchResult.classList.add("mySearchResult")
 
-  let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper");
-  searchResult.innerText = `Displaying ${getEpisodesOnPage.length} episodes `;
+  let getResultsOnPage = document.getElementsByClassName("wrapper");
+  searchResult.innerText = `Displaying ${getResultsOnPage.length} results `;
   pageNavigation.appendChild(searchResult)
 
-  searchBar.addEventListener("keyup", searchThroughEpisodes)
+  searchBar.addEventListener("keyup", searchThroughThePage)
 }
 
-function searchThroughEpisodes(e) {
+function searchThroughThePage(e) {
   let searchString = e.target.value.toUpperCase();
 
-  let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper")
+  let getResultsOnPage = document.getElementsByClassName("wrapper")
   let searchResult = document.getElementsByClassName("mySearchResult")
 
-  let allEpisodesOnPage = Array.from(getEpisodesOnPage);
-  let newEpisodes = [];
+  let allResultsOnPage = Array.from(getResultsOnPage);
+  let newResults = [];
 
-  allEpisodesOnPage.forEach(episode => {
-    if (episode.innerText.toUpperCase().includes(searchString)) {
-      episode.style.display = "";
-      newEpisodes.push(episode);
+  allResultsOnPage.forEach(result => {
+    if (result.innerText.toUpperCase().includes(searchString)) {
+      result.style.display = "";
+      newResults.push(result);
     } else {
-      episode.style.display = "none";
+      result.style.display = "none";
     }
 
-    searchResult.innerText = `Displaying ${newEpisodes.length}/${getEpisodesOnPage.length} episodes`;
+    searchResult.innerText = `Displaying ${newResults.length}/${getResultsOnPage.length} results`;
 
     if (searchString.length === 0) {                                                                      //I have this condition, so when you type "winter" for example and get a result of 10/73, then when you delete it all you want the result to be 73 and not 73/73
-      searchResult.innerText = `Displaying ${getEpisodesOnPage.length} episodes`;
+      searchResult.innerText = `Displaying ${getResultsOnPage.length} results`;
     }
   });
 }
 
 //level 300
 
-function selectEpisode() {
+function addEpisodesSelector() {
   let selectAnEpisode = document.createElement("select");
   selectAnEpisode.setAttribute("id", "episodes")
 
@@ -155,7 +159,7 @@ function selectEpisode() {
   let getEpisodesTitles = document.getElementsByClassName("episodeName")
 
   let episodeOption = document.createElement("option");
-  episodeOption.innerText = "Main Page";
+  episodeOption.innerText = "All Results";
   selectAnEpisode.appendChild(episodeOption);
 
   for (let titleIndex = 0; titleIndex < getEpisodesTitles.length; titleIndex++) {
@@ -170,18 +174,18 @@ function selectEpisode() {
 
 function selectedEpisode(e) {
   let selectedOption = e.target.value;
-  let getEpisodesOnPage = document.getElementsByClassName("episodeWrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
-  let allEpisodesOnPage = Array.from(getEpisodesOnPage);
+  let getResultsOnPage = document.getElementsByClassName("wrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
+  let allResultsOnPage = Array.from(getResultsOnPage);
 
-  allEpisodesOnPage.forEach(episode => {
-    if (episode.innerText.includes(selectedOption)) {
-      episode.style.display = "";
+  allResultsOnPage.forEach(result => {
+    if (result.innerText.includes(selectedOption)) {
+      result.style.display = "";
     } else {
-      episode.style.display = "none";
+      result.style.display = "none";
     }
 
-    if (selectedOption === "Main Page") {
-      episode.style.display = "";
+    if (selectedOption === "All Results") {
+      result.style.display = "";
     }
 
   })
@@ -189,13 +193,13 @@ function selectedEpisode(e) {
 
 //Level 400
 
-function addAllShows() {
+function addShowsSelector() {
   let selectAShow = document.createElement("select");
   selectAShow.setAttribute("id", "shows");
 
   let chooseEpisodeAndShow = document.createElement("label");
-  chooseEpisodeAndShow.innerText = "Choose a show & episode:";
-  chooseEpisodeAndShow.classList.add("myChooseEpisodeAndShow")
+  chooseEpisodeAndShow.innerText = "Choose a show";
+  chooseEpisodeAndShow.classList.add("chooseLabel")
 
   let pageNavigation = document.querySelector("nav")
   pageNavigation.prepend(chooseEpisodeAndShow, selectAShow);
@@ -222,23 +226,152 @@ function addAllShows() {
 function selectedShow(e) {
   showID = +e.target.value
 
-  remove()
-
+  removeCurrentPage()
   getAllEpisodes(showID)
 }
 
-function remove() {
-  let navigationWrapper = document.querySelector(".navigationWrapper")
-  let pageNavigation = document.querySelector("nav");
-  navigationWrapper.removeChild(pageNavigation)
+function removeCurrentPage() {
+  let rootElem = document.getElementById("root");
+  rootElem.innerHTML = "";
 
-  let rootElem = document.querySelector("#root");
-  let sectionElem = document.querySelector(".allEpisodes")
-  rootElem.removeChild(sectionElem)
+  let navigationWrapper = document.querySelector(".navigationWrapper")
+  navigationWrapper.innerHTML = "";
 }
 
-window.onload = getAllEpisodes(showID);
 
+//Level 500 part 1 and 2
+
+function sortedShowsList() {
+  let showsList = getAllShows();
+
+  let newShowsList = showsList.sort(function compare(showA, showB) {
+    if (showA.name.toUpperCase() < showB.name.toLocaleUpperCase()) { return -1 }
+    if (showA.name.toUpperCase() > showB.name.toUpperCase()) { return 1 }
+    return 0;
+  })
+
+  return newShowsList
+}
+
+function makePageForShowsList() {
+  let showsList = sortedShowsList()
+
+  let rootElem = document.getElementById("root");
+
+  let ourShowsSection = document.createElement("section");
+  ourShowsSection.classList.add("allShows")
+  rootElem.appendChild(ourShowsSection)
+
+  for (let showIndex = 0; showIndex < showsList.length; showIndex++) {
+    let theShowWrapper = document.createElement("article");
+    theShowWrapper.classList.add("wrapper");                                    //made same class for the articles elements in episodes and shows page, so "addSearchBar()" can be used on both
+    theShowWrapper.classList.add("theShowWrapper")
+
+    let theShowTitle = document.createElement("h3");
+    theShowTitle.classList.add("theShowName");
+    theShowTitle.addEventListener("click", getTheShowEpisodes)
+
+    let theShowContentsWrapper = document.createElement("div");
+    theShowContentsWrapper.classList.add("theShowContentsWrapper");
+
+    let imageContainer = document.createElement("div");
+    imageContainer.classList.add("theShowPictureContainer");
+
+    let theShowImage = document.createElement("img");
+    theShowImage.classList.add("theShowPicture");
+    imageContainer.appendChild(theShowImage);
+
+    let theShowSummary = document.createElement("div");
+    theShowSummary.classList.add("theShowDescription");
+
+    let theShowDetails = document.createElement("article");
+    theShowDetails.classList.add("theShowDetails");
+
+    theShowContentsWrapper.append(imageContainer, theShowSummary, theShowDetails)
+
+    theShowWrapper.append(theShowTitle, theShowContentsWrapper);
+
+    ourShowsSection.appendChild(theShowWrapper)
+
+    addContentToEachShow(showsList, showIndex)
+
+  }
+}
+
+function addContentToEachShow(list, index) {
+  let title = document.getElementsByClassName("theShowName")[index];
+  title.innerHTML = `${list[index].name}`;
+  title.id = list[index].id
+
+  let picture = document.getElementsByClassName("theShowPicture")[index];
+  picture.setAttribute("src", `${getImage(list, index)}`)
+
+  let description = document.getElementsByClassName("theShowDescription")[index];
+  description.innerHTML = `${list[index].summary}`;
+
+  let theShowRating = document.createElement("p");
+  theShowRating.innerHTML = `<b>Rating:</b> ${list[index].rating.average}`;
+
+  let theShowGenre = document.createElement("p");
+  theShowGenre.innerHTML = `<b>Genres:</b> ${list[index].genres}`;
+
+  let theShowStatus = document.createElement("p");
+  theShowStatus.innerHTML = `<b>Status:</b> ${list[index].status}`;
+
+  let theShowRuntime = document.createElement("p");
+  theShowRuntime.innerHTML = `<b>Runtime:</b> ${list[index].runtime}`;
+
+  let theShowDetails = document.getElementsByClassName("theShowDetails")[index];
+  theShowDetails.append(theShowRating, theShowGenre, theShowStatus, theShowRuntime)
+
+}
+
+//Level 500 part 3
+
+function getTheShowEpisodes(e) {
+  showID = +e.target.id
+
+  removeCurrentPage()
+  getAllEpisodes(showID)
+}
+
+//500 part 4
+
+function goBackToShowsListPage() {
+  let navigationWrapper = document.querySelector(".navigationWrapper")
+
+  let pageNavigation = document.querySelector("nav");
+  navigationWrapper.appendChild(pageNavigation);
+
+  let buttonWrapper = document.createElement("div");
+  buttonWrapper.classList.add("buttonWrapper");
+
+  let backToShowsListButton = document.createElement("button");
+  backToShowsListButton.innerHTML = "&laquo; Shows List";
+  backToShowsListButton.setAttribute("type", "button")
+  backToShowsListButton.setAttribute("class", "previousButton")
+
+  buttonWrapper.appendChild(backToShowsListButton)
+
+  pageNavigation.appendChild(buttonWrapper)
+
+  backToShowsListButton.addEventListener("click", displayShowsListPage)
+}
+
+function displayShowsListPage() {
+  removeCurrentPage()
+  makePageForShowsList()
+  addSearchBar()
+  addShowsSelector()
+}
+
+function setUpShowsListPage() {
+  makePageForShowsList()
+  addSearchBar()
+  addShowsSelector()
+}
+
+window.onload = setUpShowsListPage;
 
 
 
