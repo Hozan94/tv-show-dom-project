@@ -133,10 +133,10 @@ function searchThroughThePage(e) {
 
   allResultsOnPage.forEach(result => {
     if (result.innerText.toUpperCase().includes(searchString)) {
-      result.style.display = "";
+      result.classList.remove("hidden")
       newResults.push(result);
     } else {
-      result.style.display = "none";
+      result.classList.add("hidden")
     }
 
     searchResult.innerText = `Displaying ${newResults.length}/${getResultsOnPage.length} results`;
@@ -179,13 +179,13 @@ function selectedEpisode(e) {
 
   allResultsOnPage.forEach(result => {
     if (result.innerText.includes(selectedOption)) {
-      result.style.display = "";
+      result.classList.remove("hidden");
     } else {
-      result.style.display = "none";
+      result.classList.add("hidden");
     }
 
     if (selectedOption === "All Results") {
-      result.style.display = "";
+      result.classList.remove("hidden");
     }
 
   })

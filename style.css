@@ -13,7 +13,7 @@ html {
   width: 400px;
   margin-bottom: 15px;
 
-  background-color: whitesmoke;
+  background-color: #eceae8;
   font-family: "Poppins";
 
   border-radius: 10px;
@@ -53,7 +53,8 @@ html {
   margin-bottom: 50px;
   padding: 20px 10px;
 
-  background-color: whitesmoke;
+  background-color: rgb(249, 249, 249);
+  font-family: "Poppins";
 }
 
 nav {
@@ -67,7 +68,7 @@ nav {
 }
 
 .chooseLabel {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #5c5c5c;
 
   margin-left: 5%;
@@ -92,7 +93,7 @@ nav {
 }
 
 .mySearchResult {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #5c5c5c;
 
   margin-right: 5%;
@@ -173,11 +174,11 @@ nav {
 }
 
 footer {
-  background-color: #efe5dc;
+  background-color: rgb(249, 249, 249);
   padding: 1%;
   margin-bottom: 0px;
 }
 
-span {
-  background-color: yellow;
+.hidden {
+  display: none;
 }
