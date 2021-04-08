@@ -17,7 +17,7 @@ function getAllEpisodes(showID) {
     })
     .then(data => {
       allEpisodes = data;
-      setUpEpisodesList()
+      setUpEpisodesList();
     })
     .catch(error => {
       let errorMessage = document.createElement("p");
@@ -42,7 +42,7 @@ function makePageForEpisodes(episodesList) {
   const rootElem = document.getElementById("root");
 
   let ourSection = document.createElement("section");
-  ourSection.classList.add("allEpisodes")
+  ourSection.classList.add("allEpisodes");
   rootElem.appendChild(ourSection);
 
   for (let episodeIndex = 0; episodeIndex < episodesList.length; episodeIndex++) {
@@ -53,14 +53,14 @@ function makePageForEpisodes(episodesList) {
     episodeTitle.classList.add("episodeName");
 
     let imageContainer = document.createElement("div");
-    imageContainer.classList.add("EpisodePictureContainer")
+    imageContainer.classList.add("episodePictureContainer");
 
     let episodeImage = document.createElement("img");
-    episodeImage.classList.add("episodePicture")
-    imageContainer.appendChild(episodeImage)
+    episodeImage.classList.add("episodePicture");
+    imageContainer.appendChild(episodeImage);
 
     let episodeSummary = document.createElement("div");
-    episodeSummary.classList.add("episodeDescription")
+    episodeSummary.classList.add("episodeDescription");
 
     episodeContent.append(episodeTitle, imageContainer, episodeSummary);
     ourSection.append(episodeContent);
@@ -74,10 +74,19 @@ function addContentToEachEpisode(list, index) {
   title.innerHTML = `${list[index].name} - ${getSeasonAndEpisodeNumber(list, index)}`;
 
   let picture = document.getElementsByClassName("episodePicture")[index];
-  picture.setAttribute("src", `${getImage(list, index)}`)
+  picture.setAttribute("src", `${getImage(list, index)}`);
 
   let description = document.getElementsByClassName("episodeDescription")[index];
-  description.innerHTML = `${list[index].summary}`;
+  description.innerHTML = `${getSummary(list, index)}`;
+}
+
+function getSeasonAndEpisodeNumber(list, index) {
+  const doubleDigits = 10;
+
+  let seasonNumber = `S${(list[index].season < doubleDigits ? "0" : "") + list[index].season}`;
+  let episodeNumber = `E${(list[index].number < doubleDigits ? "0" : "") + list[index].number}`;
+
+  return `${seasonNumber + episodeNumber}`;
 }
 
 function getImage(list, index) {
@@ -86,22 +95,20 @@ function getImage(list, index) {
   } else {
     return list[index].image.medium;
   }
-
 }
 
-function getSeasonAndEpisodeNumber(list, index) {
-  const pattern = 10;
-
-  let seasonNumber = `S${(list[index].season < pattern ? "0" : "") + list[index].season}`
-  let episodeNumber = `E${(list[index].number < pattern ? "0" : "") + list[index].number}`
-
-  return `${seasonNumber + episodeNumber}`
+function getSummary(list, index) {
+  if (list[index].summary === null || list[index].summary === "") {
+    return "No Description Available";
+  } else {
+    return list[index].summary;
+  }
 }
 
 //level 200
 
 function addSearchBar() {
-  let navigationWrapper = document.querySelector(".navigationWrapper")
+  let navigationWrapper = document.querySelector(".navigationWrapper");
 
   let pageNavigation = document.createElement("nav");
   navigationWrapper.appendChild(pageNavigation);
@@ -110,33 +117,33 @@ function addSearchBar() {
   searchBar.setAttribute("type", "text");
   searchBar.setAttribute("placeholder", "Search through the page");
   searchBar.setAttribute("id", "mySearchBar");
-  pageNavigation.appendChild(searchBar)
+  pageNavigation.appendChild(searchBar);
 
-  let searchResult = document.createElement("label")
-  searchResult.classList.add("mySearchResult")
+  let searchResult = document.createElement("label");
+  searchResult.classList.add("mySearchResult");
 
   let getResultsOnPage = document.getElementsByClassName("wrapper");
   searchResult.innerText = `Displaying ${getResultsOnPage.length} results `;
-  pageNavigation.appendChild(searchResult)
+  pageNavigation.appendChild(searchResult);
 
-  searchBar.addEventListener("keyup", searchThroughThePage)
+  searchBar.addEventListener("keyup", searchThroughThePage);
 }
 
 function searchThroughThePage(e) {
   let searchString = e.target.value.toUpperCase();
 
-  let getResultsOnPage = document.getElementsByClassName("wrapper")
-  let searchResult = document.getElementsByClassName("mySearchResult")
+  let getResultsOnPage = document.getElementsByClassName("wrapper");
+  let searchResult = document.querySelector(".mySearchResult");
 
   let allResultsOnPage = Array.from(getResultsOnPage);
   let newResults = [];
 
   allResultsOnPage.forEach(result => {
     if (result.innerText.toUpperCase().includes(searchString)) {
-      result.classList.remove("hidden")
+      result.classList.remove("hidden");
       newResults.push(result);
     } else {
-      result.classList.add("hidden")
+      result.classList.add("hidden");
     }
 
     searchResult.innerText = `Displaying ${newResults.length}/${getResultsOnPage.length} results`;
@@ -151,12 +158,12 @@ function searchThroughThePage(e) {
 
 function addEpisodesSelector() {
   let selectAnEpisode = document.createElement("select");
-  selectAnEpisode.setAttribute("id", "episodes")
+  selectAnEpisode.setAttribute("id", "episodes");
 
-  let pageNavigation = document.querySelector("nav")                                                      //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
+  let pageNavigation = document.querySelector("nav");                                                     //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
   pageNavigation.prepend(selectAnEpisode);
 
-  let getEpisodesTitles = document.getElementsByClassName("episodeName")
+  let getEpisodesTitles = document.getElementsByClassName("episodeName");
 
   let episodeOption = document.createElement("option");
   episodeOption.innerText = "All Results";
@@ -169,10 +176,10 @@ function addEpisodesSelector() {
     episodeOption.innerText = getEpisodesTitles[titleIndex].innerText;
   }
 
-  selectAnEpisode.addEventListener("change", selectedEpisode)
+  selectAnEpisode.addEventListener("change", changeEpisode);
 }
 
-function selectedEpisode(e) {
+function changeEpisode(e) {
   let selectedOption = e.target.value;
   let getResultsOnPage = document.getElementsByClassName("wrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
   let allResultsOnPage = Array.from(getResultsOnPage);
@@ -188,7 +195,7 @@ function selectedEpisode(e) {
       result.classList.remove("hidden");
     }
 
-  })
+  });
 }
 
 //Level 400
@@ -199,77 +206,77 @@ function addShowsSelector() {
 
   let chooseEpisodeAndShow = document.createElement("label");
   chooseEpisodeAndShow.innerText = "Choose a show";
-  chooseEpisodeAndShow.classList.add("chooseLabel")
+  chooseEpisodeAndShow.classList.add("chooseLabel");
 
-  let pageNavigation = document.querySelector("nav")
+  let pageNavigation = document.querySelector("nav");
   pageNavigation.prepend(chooseEpisodeAndShow, selectAShow);
 
-  let showsList = getAllShows();
+  let showsList = getSortedShowsList();
 
-  let sortedShowsList = showsList.sort(function compare(showA, showB) {
-    if (showA.name.toUpperCase() < showB.name.toLocaleUpperCase()) { return -1 }
-    if (showA.name.toUpperCase() > showB.name.toUpperCase()) { return 1 }
-    return 0;
-  })
-
-  for (let showIndex = 0; showIndex < sortedShowsList.length; showIndex++) {
+  for (let showIndex = 0; showIndex < showsList.length; showIndex++) {
     let showOption = document.createElement("option");
     selectAShow.appendChild(showOption);
 
-    showOption.innerText = showsList[showIndex].name
-    showOption.setAttribute("value", `${showsList[showIndex].id}`)
+    showOption.innerText = showsList[showIndex].name;
+    showOption.setAttribute("value", `${showsList[showIndex].id}`);
+
+    if (showsList[showIndex].id === showID) {                                                   // This condition is added so when an option is selected from the "shows selector", the default option will be what the user selected and not the very first option "24";
+      showOption.setAttribute("selected", `${showsList[showIndex]}`);
+      showID = 0;
+    }
   }
 
-  selectAShow.addEventListener("change", selectedShow)
+  selectAShow.addEventListener("change", changeShow);
 }
 
-function selectedShow(e) {
-  showID = +e.target.value
+function changeShow(e) {
+  showID = +e.target.value;
 
-  removeCurrentPage()
-  getAllEpisodes(showID)
+  removeCurrentPage();
+
+  getAllEpisodes(showID);
 }
 
 function removeCurrentPage() {
   let rootElem = document.getElementById("root");
   rootElem.innerHTML = "";
 
-  let navigationWrapper = document.querySelector(".navigationWrapper")
+  let navigationWrapper = document.querySelector(".navigationWrapper");
   navigationWrapper.innerHTML = "";
 }
 
 
 //Level 500 part 1 and 2
 
-function sortedShowsList() {
-  let showsList = getAllShows();
+function getSortedShowsList() {
+  let allShows = getAllShows();
 
-  let newShowsList = showsList.sort(function compare(showA, showB) {
+  let sortedShowsList = allShows.sort(function compare(showA, showB) {
     if (showA.name.toUpperCase() < showB.name.toLocaleUpperCase()) { return -1 }
     if (showA.name.toUpperCase() > showB.name.toUpperCase()) { return 1 }
     return 0;
   })
 
-  return newShowsList
+  return sortedShowsList;
 }
 
 function makePageForShowsList() {
-  let showsList = sortedShowsList()
+  let showsList = getSortedShowsList()
 
   let rootElem = document.getElementById("root");
 
   let ourShowsSection = document.createElement("section");
-  ourShowsSection.classList.add("allShows")
-  rootElem.appendChild(ourShowsSection)
+  ourShowsSection.classList.add("allShows");
+  rootElem.appendChild(ourShowsSection);
 
   for (let showIndex = 0; showIndex < showsList.length; showIndex++) {
     let theShowWrapper = document.createElement("article");
     theShowWrapper.classList.add("wrapper");                                    //made same class for the articles elements in episodes and shows page, so "addSearchBar()" can be used on both
-    theShowWrapper.classList.add("theShowWrapper")
+    theShowWrapper.classList.add("theShowWrapper");
 
     let theShowTitle = document.createElement("h3");
     theShowTitle.classList.add("theShowName");
-    theShowTitle.addEventListener("click", getTheShowEpisodes)
+    theShowTitle.addEventListener("click", getTheShowEpisodes);
 
     let theShowContentsWrapper = document.createElement("div");
     theShowContentsWrapper.classList.add("theShowContentsWrapper");
@@ -284,16 +291,16 @@ function makePageForShowsList() {
     let theShowSummary = document.createElement("div");
     theShowSummary.classList.add("theShowDescription");
 
-    let theShowDetails = document.createElement("article");
+    let theShowDetails = document.createElement("section");
     theShowDetails.classList.add("theShowDetails");
 
-    theShowContentsWrapper.append(imageContainer, theShowSummary, theShowDetails)
+    theShowContentsWrapper.append(imageContainer, theShowSummary, theShowDetails);
 
     theShowWrapper.append(theShowTitle, theShowContentsWrapper);
 
-    ourShowsSection.appendChild(theShowWrapper)
+    ourShowsSection.appendChild(theShowWrapper);
 
-    addContentToEachShow(showsList, showIndex)
+    addContentToEachShow(showsList, showIndex);
 
   }
 }
@@ -301,10 +308,10 @@ function makePageForShowsList() {
 function addContentToEachShow(list, index) {
   let title = document.getElementsByClassName("theShowName")[index];
   title.innerHTML = `${list[index].name}`;
-  title.id = list[index].id
+  title.id = list[index].id;
 
   let picture = document.getElementsByClassName("theShowPicture")[index];
-  picture.setAttribute("src", `${getImage(list, index)}`)
+  picture.setAttribute("src", `${getImage(list, index)}`);
 
   let description = document.getElementsByClassName("theShowDescription")[index];
   description.innerHTML = `${list[index].summary}`;
@@ -322,23 +329,23 @@ function addContentToEachShow(list, index) {
   theShowRuntime.innerHTML = `<b>Runtime:</b> ${list[index].runtime}`;
 
   let theShowDetails = document.getElementsByClassName("theShowDetails")[index];
-  theShowDetails.append(theShowRating, theShowGenre, theShowStatus, theShowRuntime)
+  theShowDetails.append(theShowRating, theShowGenre, theShowStatus, theShowRuntime);
 
 }
 
 //Level 500 part 3
 
 function getTheShowEpisodes(e) {
-  showID = +e.target.id
+  showID = +e.target.id;
 
-  removeCurrentPage()
-  getAllEpisodes(showID)
+  removeCurrentPage();
+  getAllEpisodes(showID);
 }
 
 //500 part 4
 
 function goBackToShowsListPage() {
-  let navigationWrapper = document.querySelector(".navigationWrapper")
+  let navigationWrapper = document.querySelector(".navigationWrapper");
 
   let pageNavigation = document.querySelector("nav");
   navigationWrapper.appendChild(pageNavigation);
@@ -348,27 +355,27 @@ function goBackToShowsListPage() {
 
   let backToShowsListButton = document.createElement("button");
   backToShowsListButton.innerHTML = "&laquo; Shows List";
-  backToShowsListButton.setAttribute("type", "button")
-  backToShowsListButton.setAttribute("class", "previousButton")
+  backToShowsListButton.setAttribute("type", "button");
+  backToShowsListButton.setAttribute("class", "previousButton");
 
-  buttonWrapper.appendChild(backToShowsListButton)
+  buttonWrapper.appendChild(backToShowsListButton);
 
-  pageNavigation.appendChild(buttonWrapper)
+  pageNavigation.appendChild(buttonWrapper);
 
-  backToShowsListButton.addEventListener("click", displayShowsListPage)
+  backToShowsListButton.addEventListener("click", displayShowsListPage);
 }
 
 function displayShowsListPage() {
-  removeCurrentPage()
-  makePageForShowsList()
-  addSearchBar()
-  addShowsSelector()
+  removeCurrentPage();
+  makePageForShowsList();
+  addSearchBar();
+  addShowsSelector();
 }
 
 function setUpShowsListPage() {
-  makePageForShowsList()
-  addSearchBar()
-  addShowsSelector()
+  makePageForShowsList();
+  addSearchBar();
+  addShowsSelector();
 }
 
 window.onload = setUpShowsListPage;

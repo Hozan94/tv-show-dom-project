@@ -33,7 +33,7 @@ html {
   color: black;
 }
 
-.EpisodePictureContainer {
+.episodePictureContainer {
   max-width: 100%;
 }
 
@@ -68,10 +68,10 @@ nav {
 }
 
 .chooseLabel {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #5c5c5c;
 
-  margin-left: 5%;
+  margin-left: 3%;
 }
 
 #shows {
@@ -93,10 +93,10 @@ nav {
 }
 
 .mySearchResult {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #5c5c5c;
 
-  margin-right: 5%;
+  margin-right: 3%;
 }
 
 .buttonWrapper {
