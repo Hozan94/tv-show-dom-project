@@ -49,6 +49,16 @@ html {
   text-align: left;
 }
 
+.showMoreButton {
+  background-color: white;
+
+  font-size: 0.9rem;
+  font-family: "Poppins";
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .navigationWrapper {
   margin-bottom: 50px;
   padding: 20px 10px;
@@ -58,7 +68,8 @@ html {
 }
 
 nav {
-  max-width: 100%;
+  width: 100%;
+  height: 120px;
 
   display: flex;
   flex-direction: row;
@@ -179,6 +190,35 @@ footer {
   margin-bottom: 0px;
 }
 
+/* The following classed are evoked during an event */
+
 .hidden {
   display: none;
+}
+
+.showLess {
+  display: none;
+}
+
+.showMore {
+  display: inline;
+}
+
+.showMoreButton:hover {
+  box-shadow: 2px 12px 16px 0 rgba(0, 0, 0, 0.24);
+}
+
+/* Adding Media query */
+
+@media (max-width: 600px) {
+  .theShowDescription {
+    display: none;
+  }
+  .theShowDetails {
+    width: 80%;
+  }
+  .theShowName {
+    padding-left: 0;
+    text-align: center;
+  }
 }

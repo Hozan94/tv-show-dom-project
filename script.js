@@ -78,6 +78,9 @@ function addContentToEachEpisode(list, index) {
 
   let description = document.getElementsByClassName("episodeDescription")[index];
   description.innerHTML = `${getSummary(list, index)}`;
+
+  addShowMoreButtonToEpisodes(list, index)
+
 }
 
 function getSeasonAndEpisodeNumber(list, index) {
@@ -100,9 +103,79 @@ function getImage(list, index) {
 function getSummary(list, index) {
   if (list[index].summary === null || list[index].summary === "") {
     return "No Description Available";
+
   } else {
-    return list[index].summary;
+    let text = list[index].summary.split(" ")
+
+    if (text.length > 70) {
+      text.splice(70, 0, `<span class="dots">...</span><span class="showLess">`)
+
+      let lastElementInText = text[text.length - 1]
+      let lastElementInTextToString = lastElementInText.toString()
+      let lastElementInTextReplacement = lastElementInTextToString.replace("</p>", "</span></p>")
+      let newLastElementInText = lastElementInTextReplacement.split(" ");
+
+      text.splice(text.length - 1, 1, `${newLastElementInText}`)
+
+      return text.join(" ")
+
+    } else {
+      return list[index].summary
+    }
   }
+}
+
+// Part of level 999
+
+function addShowMoreButtonToEpisodes(list, index) {
+  if (list[index].summary !== null) {
+    if (list[index].summary.split(" ").length > 70) {
+
+      let showMoreButton = document.createElement("button");
+      showMoreButton.innerText = "Show More";
+      showMoreButton.setAttribute("class", "showMoreButton");
+
+      let description = document.getElementsByClassName("episodeDescription")[index];
+      description.appendChild(showMoreButton);
+
+      showMoreButton.addEventListener("click", displayRemainingText);
+
+    }
+  }
+}
+
+function displayRemainingText(e) {
+  if (e.path[1].children[1].children[1] !== undefined) {
+    let remainingText = e.path[1].children[1].children[1];
+    remainingText.classList.toggle("showMore");
+
+    let showButton = e.target;
+    let dots = e.path[1].children[1].children[0];
+
+    if (showButton.innerText === "Show More") {
+      showButton.innerText = "Show Less";
+      dots.classList.toggle("showLess");
+    } else {
+      showButton.innerText = "Show More";
+      dots.classList.toggle("showLess");
+    }
+
+  } else {
+    let remainingText = e.path[1].children[0].children[1];
+    remainingText.classList.toggle("showMore");
+
+    let showButton = e.target;
+    let dots = e.path[1].children[0].children[0];
+
+    if (showButton.innerText === "Show More") {
+      showButton.innerText = "Show Less";
+      dots.classList.toggle("showLess");
+    } else {
+      showButton.innerText = "Show More";
+      dots.classList.toggle("showLess");
+    }
+  }
+
 }
 
 //level 200
@@ -182,6 +255,7 @@ function addEpisodesSelector() {
 function changeEpisode(e) {
   let selectedOption = e.target.value;
   let getResultsOnPage = document.getElementsByClassName("wrapper");                             //I declared this variable again (there is one in level 200), did not want to have anything in the global scope, so not sure if it is best practice?
+  let searchResult = document.querySelector(".mySearchResult");
   let allResultsOnPage = Array.from(getResultsOnPage);
 
   allResultsOnPage.forEach(result => {
@@ -191,8 +265,11 @@ function changeEpisode(e) {
       result.classList.add("hidden");
     }
 
+    searchResult.innerText = `Displaying 1/${getResultsOnPage.length} results`;
+
     if (selectedOption === "All Results") {
       result.classList.remove("hidden");
+      searchResult.innerText = `Displaying ${getResultsOnPage.length} results`;
     }
 
   });
