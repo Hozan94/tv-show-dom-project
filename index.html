@@ -3,18 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TV Show Project | My Name (My GitHub username)</title>
+    <title>TV Show Project | Hozan Ali (Hozan94)</title>
     <link href="style.css" rel="stylesheet" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
-    <div id="root">
-    </div>
-
-    <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <script src="episodes.js"></script>
-
+      <header>
+        <div class="navigationWrapper"></div>
+      </header>
+      <main>
+        <div id="root"></div>
+      </main>
+  
+    <footer>
+      <p>
+        All data is collected from
+        <a href="https://www.tvmaze.com/" target="_blank">TVMaze.com</a>
+      </p>
+      <p>&copy; 2020 Hozan Ali</p>
+    </footer>
+    <!-- Loads a provided function called getAllShows() which returns all shows -->
+    <script src="shows.js"></script>
+    <!-- <script src="episodes.js"></script> -->
     <!-- Loads YOUR javascript code -->
     <script src="script.js"></script>
   </body>

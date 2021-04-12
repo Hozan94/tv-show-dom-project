@@ -1,3 +1,224 @@
-#root {
-  color: red;
+html {
+  font-size: 16px;
+}
+
+.allEpisodes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.wrapper {
+  width: 400px;
+  margin-bottom: 15px;
+
+  background-color: #eceae8;
+  font-family: "Poppins";
+
+  border-radius: 10px;
+  text-align: center;
+}
+
+.episodeName {
+  height: 60px;
+  padding: 10px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+
+  border: 2px solid black;
+  border-radius: 5px;
+
+  font-size: 1.3rem;
+  color: black;
+}
+
+.episodePictureContainer {
+  max-width: 100%;
+}
+
+.episodePicture {
+  max-width: 100%;
+}
+
+.episodeDescription {
+  padding: 10px;
+
+  font-size: 1.1rem;
+  color: #5c5c5c;
+  text-align: left;
+}
+
+.showMoreButton {
+  background-color: white;
+
+  font-size: 0.9rem;
+  font-family: "Poppins";
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.navigationWrapper {
+  margin-bottom: 50px;
+  padding: 20px 10px;
+
+  background-color: rgb(249, 249, 249);
+  font-family: "Poppins";
+}
+
+nav {
+  width: 100%;
+  height: 120px;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.chooseLabel {
+  font-size: 1rem;
+  color: #5c5c5c;
+
+  margin-left: 3%;
+}
+
+#shows {
+  width: 20%;
+  height: 35px;
+}
+
+#episodes {
+  width: 20%;
+  height: 35px;
+
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+#mySearchBar {
+  width: 20%;
+  height: 30px;
+}
+
+.mySearchResult {
+  font-size: 1rem;
+  color: #5c5c5c;
+
+  margin-right: 3%;
+}
+
+.buttonWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.previousButton {
+  font-size: 1.2rem;
+  color: #5c5c5c;
+  background: white;
+  border: 3px solid #5c5c5c;
+
+  padding-left: 2%;
+  padding-right: 2%;
+  margin-top: 1%;
+
+  cursor: pointer;
+}
+
+.allShows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.theShowWrapper {
+  width: 95%;
+}
+
+.theShowContentsWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.theShowName {
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: black;
+
+  text-align: left;
+}
+
+.theShowDescription {
+  width: 55%;
+
+  font-size: 1.1rem;
+  color: #5c5c5c;
+  text-align: left;
+}
+
+.theShowDescription p {
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.theShowDetails {
+  width: 20%;
+  word-wrap: break-word;
+  font-size: 1.1rem;
+  color: #5c5c5c;
+  text-align: left;
+}
+
+.theShowDetails p:first-of-type {
+  margin-top: 0;
+}
+
+.theShowPictureContainer {
+  width: 15%;
+}
+.theShowPicture {
+  max-width: 100%;
+}
+
+footer {
+  background-color: rgb(249, 249, 249);
+  padding: 1%;
+  margin-bottom: 0px;
+}
+
+/* The following classed are evoked during an event */
+
+.hidden {
+  display: none;
+}
+
+.showLess {
+  display: none;
+}
+
+.showMore {
+  display: inline;
+}
+
+.showMoreButton:hover {
+  box-shadow: 2px 12px 16px 0 rgba(0, 0, 0, 0.24);
+}
+
+/* Adding Media query */
+
+@media (max-width: 600px) {
+  .theShowDescription {
+    display: none;
+  }
+  .theShowDetails {
+    width: 80%;
+  }
+  .theShowName {
+    padding-left: 0;
+    text-align: center;
+  }
 }
