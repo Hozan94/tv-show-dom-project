@@ -4,6 +4,7 @@
 
 let allEpisodes;
 let showID;
+const rootElem = document.getElementById("root");
 
 function getAllEpisodes(showID) {
   fetch(`https://api.tvmaze.com/shows/${showID}/episodes`)
@@ -39,7 +40,6 @@ function setUpEpisodesList() {
 // Level 100
 
 function makePageForEpisodes(episodesList) {
-  const rootElem = document.getElementById("root");
 
   let ourSection = document.createElement("section");
   ourSection.classList.add("allEpisodes");
@@ -315,7 +315,6 @@ function changeShow(e) {
 }
 
 function removeCurrentPage() {
-  let rootElem = document.getElementById("root");
   rootElem.innerHTML = "";
 
   let navigationWrapper = document.querySelector(".navigationWrapper");
@@ -339,8 +338,6 @@ function getSortedShowsList() {
 
 function makePageForShowsList() {
   let showsList = getSortedShowsList()
-
-  let rootElem = document.getElementById("root");
 
   let ourShowsSection = document.createElement("section");
   ourShowsSection.classList.add("allShows");
